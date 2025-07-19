@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th, .data-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Library Management</h1>
+            <p>Manage your books, readers, and borrowings efficiently</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('books')">📖 Books</button>
+            <button class="tab-button" onclick="showTab('readers')">👥 Readers</button>
+            <button class="tab-button" onclick="showTab('borrowings')">📋 Borrowings</button>
+            <button class="tab-button" onclick="showTab('stats')">📊 Statistics</button>
+        </div>
+
+        <!-- Books Tab -->
+        <div id="books" class="tab-content active">
+            <div class="form-section">
+                <h3>📖 Add New Book</h3>
+                <form id="bookForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="bookTitle">Title *</label>
+                            <input type="text" id="bookTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookAuthor">Author *</label>
+                            <input type="text" id="bookAuthor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookISBN">ISBN</label>
+                            <input type="text" id="bookISBN">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookGenre">Genre</label>
+                            <input type="text" id="bookGenre">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Book</button>
+                </form>
+            </div>
+
+            <div id="booksAlert"></div>
+            <div id="booksTable"></div>
+        </div>
+
+        <!-- Readers Tab -->
+        <div id="readers" class="tab-content">
+            <div class="form-section">
+                <h3>👤 Add New Reader</h3>
+                <form id="readerForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="readerName">Name *</label>
+                            <input type="text" id="readerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="readerEmail">Email *</label>
+                            <input type="email" id="readerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="readerPhone">Phone</label>
+                            <input type="tel" id="readerPhone">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Reader</button>
+                </form>
+            </div>
+
+            <div id="readersAlert"></div>
+            <div id="readersTable"></div>
+        </div>
+
+        <!-- Borrowings Tab -->
+        <div id="borrowings" class="tab-content">
+            <div class="form-section">
+                <h3>📋 Create New Borrowing</h3>
+                <form id="borrowingForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="borrowingBookId">Book *</label>
+                            <select id="borrowingBookId" required>
+                                <option value="">Select a book</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="borrowingReaderId">Reader *</label>
+                            <select id="borrowingReaderId" required>
+                                <option value="">Select a reader</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Borrowing</button>
+                </form>
+            </div>
+
+            <div id="borrowingsAlert"></div>
+            <div id="borrowingsTable"></div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="stats" class="tab-content">
+            <div id="statsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api/v1';
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and mark button as active
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the selected tab
+            if (tabName === 'books') {
+                loadBooks();
+            } else if (tabName === 'readers') {
+                loadReaders();
+            } else if (tabName === 'borrowings') {
+                loadBorrowings();
+                loadBooksAndReaders();
+            } else if (tabName === 'stats') {
+                loadStats();
+            }
+        }
+
+        // Utility Functions
+        function showAlert(containerId, message, type = 'success') {
+            const alertContainer = document.getElementById(containerId);
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type === 'error' ? 'error' : 'success'}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(API_BASE + url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorData}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Books Management
+        document.getElementById('bookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const bookData = {
+                title: document.getElementById('bookTitle').value,
+                author: document.getElementById('bookAuthor').value,
+                isbn: document.getElementById('bookISBN').value,
+                genre: document.getElementById('bookGenre').value
+            };
+            
+            try {
+                await apiRequest('/books', {
+                    method: 'POST',
+                    body: JSON.stringify(bookData)
+                });
+                
+                showAlert('booksAlert', 'Book added successfully!');
+                document.getElementById('bookForm').reset();
+                loadBooks();
+            } catch (error) {
+                showAlert('booksAlert', 'Error adding book: ' + error.message, 'error');
+            }
+        });
+
+        async function loadBooks() {
+            try {
+                const books = await apiRequest('/books');
+                displayBooks(books);
+            } catch (error) {
+                showAlert('booksAlert', 'Error loading books: ' + error.message, 'error');
+            }
+        }
+
+        function displayBooks(books) {
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>ISBN</th>
+                            <th>Genre</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${books.map(book => `
+                            <tr>
+                                <td>${book.id}</td>
+                                <td><strong>${book.title}</strong></td>
+                                <td>${book.author}</td>
+                                <td>${book.isbn || 'N/A'}</td>
+                                <td>${book.genre || 'N/A'}</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-danger btn-small" onclick="deleteBook(${book.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('booksTable').innerHTML = tableHtml;
+        }
+
+        async function deleteBook(id) {
+            if (confirm('Are you sure you want to delete this book?')) {
+                try {
+                    await apiRequest(`/books/${id}`, { method: 'DELETE' });
+                    showAlert('booksAlert', 'Book deleted successfully!');
+                    loadBooks();
+                } catch (error) {
+                    showAlert('booksAlert', 'Error deleting book: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // Readers Management
+        document.getElementById('readerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const readerData = {
+                name: document.getElementById('readerName').value,
+                email: document.getElementById('readerEmail').value,
+                phone: document.getElementById('readerPhone').value
+            };
+            
+            try {
+                await apiRequest('/readers', {
+                    method: 'POST',
+                    body: JSON.stringify(readerData)
+                });
+                
+                showAlert('readersAlert', 'Reader added successfully!');
+                document.getElementById('readerForm').reset();
+                loadReaders();
+            } catch (error) {
+                showAlert('readersAlert', 'Error adding reader: ' + error.message, 'error');
+            }
+        });
+
+        async function loadReaders() {
+            try {
+                const readers = await apiRequest('/readers');
+                displayReaders(readers);
+            } catch (error) {
+                showAlert('readersAlert', 'Error loading readers: ' + error.message, 'error');
+            }
+        }
+
+        function displayReaders(readers) {
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${readers.map(reader => `
+                            <tr>
+                                <td>${reader.id}</td>
+                                <td><strong>${reader.name}</strong></td>
+                                <td>${reader.email}</td>
+                                <td>${reader.phone || 'N/A'}</td>
+                                <td>${reader.registration_date}</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-danger btn-small" onclick="deleteReader(${reader.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('readersTable').innerHTML = tableHtml;
+        }
+
+        async function deleteReader(id) {
+            if (confirm('Are you sure you want to delete this reader?')) {
+                try {
+                    await apiRequest(`/readers/${id}`, { method: 'DELETE' });
+                    showAlert('readersAlert', 'Reader deleted successfully!');
+                    loadReaders();
+                } catch (error) {
+                    showAlert('readersAlert', 'Error deleting reader: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // Borrowings Management
+        document.getElementById('borrowingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const borrowingData = {
+                book_id: parseInt(document.getElementById('borrowingBookId').value),
+                reader_id: parseInt(document.getElementById('borrowingReaderId').value)
+            };
+            
+            try {
+                await apiRequest('/borrowings', {
+                    method: 'POST',
+                    body: JSON.stringify(borrowingData)
+                });
+                
+                showAlert('borrowingsAlert', 'Borrowing created successfully!');
+                document.getElementById('borrowingForm').reset();
+                loadBorrowings();
+            } catch (error) {
+                showAlert('borrowingsAlert', 'Error creating borrowing: ' + error.message, 'error');
+            }
+        });
+
+        async function loadBorrowings() {
+            try {
+                const borrowings = await apiRequest('/borrowings');
+                const books = await apiRequest('/books');
+                const readers = await apiRequest('/readers');
+                displayBorrowings(borrowings, books, readers);
+            } catch (error) {
+                showAlert('borrowingsAlert', 'Error loading borrowings: ' + error.message, 'error');
+            }
+        }
+
+        function displayBorrowings(borrowings, books, readers) {
+            const bookMap = Object.fromEntries(books.map(book => [book.id, book]));
+            const readerMap = Object.fromEntries(readers.map(reader => [reader.id, reader]));
+            
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Book</th>
+                            <th>Reader</th>
+                            <th>Borrow Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${borrowings.map(borrowing => `
+                            <tr>
+                                <td>${borrowing.id}</td>
+                                <td><strong>${bookMap[borrowing.book_id]?.title || 'Unknown Book'}</strong></td>
+                                <td>${readerMap[borrowing.reader_id]?.name || 'Unknown Reader'}</td>
+                                <td>${borrowing.borrow_date}</td>
+                                <td>${borrowing.return_date || 'Not returned'}</td>
+                                <td>
+                                    <span class="badge ${borrowing.returned ? 'badge-success' : 'badge-warning'}">
+                                        ${borrowing.returned ? 'Returned' : 'Active'}
+                                    </span>
+                                </td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-danger btn-small" onclick="deleteBorrowing(${borrowing.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('borrowingsTable').innerHTML = tableHtml;
+        }
+
+        async function deleteBorrowing(id) {
+            if (confirm('Are you sure you want to delete this borrowing?')) {
+                try {
+                    await apiRequest(`/borrowings/${id}`, { method: 'DELETE' });
+                    showAlert('borrowingsAlert', 'Borrowing deleted successfully!');
+                    loadBorrowings();
+                } catch (error) {
+                    showAlert('borrowingsAlert', 'Error deleting borrowing: ' + error.message, 'error');
+                }
+            }
+        }
+
+        async function loadBooksAndReaders() {
+            try {
+                const [books, readers] = await Promise.all([
+                    apiRequest('/books'),
+                    apiRequest('/readers')
+                ]);
+                
+                // Populate book select
+                const bookSelect = document.getElementById('borrowingBookId');
+                bookSelect.innerHTML = '<option value="">Select a book</option>' +
+                    books.map(book => `<option value="${book.id}">${book.title} - ${book.author}</option>`).join('');
+                
+                // Populate reader select
+                const readerSelect = document.getElementById('borrowingReaderId');
+                readerSelect.innerHTML = '<option value="">Select a reader</option>' +
+                    readers.map(reader => `<option value="${reader.id}">${reader.name} (${reader.email})</option>`).join('');
+            } catch (error) {
+                console.error('Error loading books and readers:', error);
+            }
+        }
+
+        // Statistics
+        async function loadStats() {
+            try {
+                const [books, readers, borrowings] = await Promise.all([
+                    apiRequest('/books'),
+                    apiRequest('/readers'),
+                    apiRequest('/borrowings')
+                ]);
+                
+                const activeBorrowings = borrowings.filter(b => !b.returned).length;
+                
+                const statsHtml = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${books.length}</div>
+                            <div class="stat-label">Total Books</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${readers.length}</div>
+                            <div class="stat-label">Total Readers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${borrowings.length}</div>
+                            <div class="stat-label">Total Borrowings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${activeBorrowings}</div>
+                            <div class="stat-label">Active Borrowings</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('statsContent').innerHTML = statsHtml;
+            } catch (error) {
+                document.getElementById('statsContent').innerHTML = `
+                    <div class="alert alert-error">
+                        Error loading statistics: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBooks();
+        });
+    </script>
+</body>
+</html>
